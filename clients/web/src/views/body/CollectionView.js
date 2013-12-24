@@ -12,14 +12,17 @@ girder.views.CollectionView = Backbone.View.extend({
         if (settings.collection) {
             this.model = settings.collection;
             this.render();
-
-            // This page should be re-rendered if the user logs in or out
-            girder.events.on('g:login', this.userChanged, this);
         }
-        else {
-            console.error('Implement fetch then render collection');
-        }
+        else if (settings.id) {
+            this.model = new girder.models.CollectionModel();
+            this.model.set('_id', settings.id);
 
+            this.model.on('g:fetched', function () {
+                this.render();
+            }, this).fetch();
+        }
+        // This page should be re-rendered if the user logs in or out
+        girder.events.on('g:login', this.userChanged, this);
     },
 
     editCollection: function () {
