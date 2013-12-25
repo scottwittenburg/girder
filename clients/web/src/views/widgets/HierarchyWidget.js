@@ -7,7 +7,8 @@ girder.views.HierarchyWidget = Backbone.View.extend({
         'click a.g-download-folder': 'downloadFolder',
         'click a.g-delete-folder': 'deleteFolderDialog',
         'click .g-upload-here-button': 'uploadDialog',
-        'click .g-folder-access-button': 'editFolderAccess'
+        'click .g-folder-access-button': 'editFolderAccess',
+        'click .g-hierarchy-level-up': 'upOneLevel'
     },
 
     /**
@@ -46,18 +47,6 @@ girder.views.HierarchyWidget = Backbone.View.extend({
         }));
 
         var view = this;
-        this.$('.g-folder-info-button,.g-folder-access-button,.g-select-all,' +
-               '.g-upload-here-button,.g-checked-actions-button').tooltip({
-            container: 'body',
-            animation: false,
-            delay: {show: 100}
-        });
-        this.$('.g-folder-actions-button').tooltip({
-            container: 'body',
-            placement: 'left',
-            animation: false,
-            delay: {show: 100}
-        });
         this.$('.g-select-all').unbind('change').change(function () {
             view.folderListView.checkAll(this.checked);
 
@@ -128,6 +117,20 @@ girder.views.HierarchyWidget = Backbone.View.extend({
         else {
             this.itemCount = 0;
         }
+
+        this.$('.g-folder-info-button,.g-folder-access-button,.g-select-all,' +
+               '.g-upload-here-button,.g-checked-actions-button').tooltip({
+            container: this.$el,
+            animation: false,
+            delay: {show: 100}
+        });
+        this.$('.g-folder-actions-button,.g-hierarchy-level-up').tooltip({
+            container: this.$el,
+            placement: 'left',
+            animation: false,
+            delay: {show: 100}
+        });
+
         return this;
     },
 
@@ -141,6 +144,20 @@ girder.views.HierarchyWidget = Backbone.View.extend({
         });
         this.parentModel = folder;
         this.parentType = 'folder';
+        this.render();
+    },
+
+    /**
+     * Go to the parent of the current folder
+     */
+    upOneLevel: function () {
+        this.breadcrumbs.pop();
+
+        var parent = this.breadcrumbs[this.breadcrumbs.length - 1];
+
+        this.parentType = parent.type;
+        this.parentModel = parent.model;
+
         this.render();
     },
 
@@ -250,6 +267,9 @@ girder.views.HierarchyBreadcrumbView = Backbone.View.extend({
         'click a.g-breadcrumb-link': function (event) {
             var link = $(event.currentTarget);
             this.trigger('g:breadcrumbClicked', parseInt(link.attr('g-index'), 10));
+        },
+        'click .g-hierarchy-level-up': function () {
+
         }
     },
 
