@@ -37,6 +37,11 @@
 .g-item-metadata
   .g-item-metadata-header Metadata
   .g-item-metadata-container
+    if item.get('meta')
+      each value, key in item.get('meta')
+        .g-item-metadata-row
+          span.g-item-metadata-key #{key}:
+          span.g-item-metadata-value #{value}
 
 .g-item-files
   .g-item-files-header Files

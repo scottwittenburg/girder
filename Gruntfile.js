@@ -141,7 +141,11 @@ module.exports = function (grunt) {
                 }
                 var srcs = grunt.file.expand(input + '/*');
                 srcs.forEach(function (file) {
-                    fs.writeFileSync(dst + '/' + path.basename(file), fs.readFileSync(file));
+                    if(!fs.lstatSync(file).isDirectory()) {
+                        fs.writeFileSync(dst + '/' + path.basename(file), fs.readFileSync(file));
+                    } else {
+                        console.log('foo -->' + file);
+                    }
                 });
             }
             else {
